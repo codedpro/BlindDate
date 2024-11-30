@@ -1,14 +1,15 @@
 "use client";
 
-import { useAppStore } from "@/store";
+import { useStore } from "@/store/use-hooks";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface NavBarProps {
-  active: "gap" | "profile" | "search";
+  active: string; // Type for the 'active' prop
 }
 
-const NavBar: React.FC<NavBarProps> = ({ active }) => {
-  const { appData } = useAppStore();
+const NavBar = ({ active }: NavBarProps) => {
+  const { appData, bio } = useStore();
   const router = useRouter();
 
   return (
@@ -30,18 +31,18 @@ const NavBar: React.FC<NavBarProps> = ({ active }) => {
           <path
             d="M22 6.25V11.35C22 12.62 21.58 13.69 20.83 14.43C20.09 15.18 19.02 15.6 17.75 15.6V17.41C17.75 18.09 16.99 18.5 16.43 18.12L15.46 17.48C15.55 17.17 15.59 16.83 15.59 16.47V12.4C15.59 10.36 14.23 9 12.19 9H5.39999C5.25999 9 5.13 9.01002 5 9.02002V6.25C5 3.7 6.7 2 9.25 2H17.75C20.3 2 22 3.7 22 6.25Z"
             stroke={`${active == "gap" ? "#DB5350" : "#C1CBD9"} `}
-            stroke-width="1.5"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M15.59 12.4V16.47C15.59 16.83 15.55 17.17 15.46 17.48C15.09 18.95 13.87 19.87 12.19 19.87H9.47L6.45 21.88C6 22.19 5.39999 21.86 5.39999 21.32V19.87C4.37999 19.87 3.53 19.53 2.94 18.94C2.34 18.34 2 17.49 2 16.47V12.4C2 10.5 3.18 9.19002 5 9.02002C5.13 9.01002 5.25999 9 5.39999 9H12.19C14.23 9 15.59 10.36 15.59 12.4Z"
             stroke={`${active == "gap" ? "#DB5350" : "#C1CBD9"} `}
-            stroke-width="1.5"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </div>
@@ -67,7 +68,7 @@ const NavBar: React.FC<NavBarProps> = ({ active }) => {
             fill={`${active == "profile" ? "#DB5350" : "#C1CBD9"} `}
           />
           <path
-            d="M12 6.93005C9.93 6.93005 8.25 8.61005 8.25 10.6801C8.25 12.7101 9.84 14.3601 11.95 14.4201C11.98 14.4201 12.02 14.4201 12.04 14.4201C12.06 14.4201 12.09 14.4201 12.11 14.4201C12.12 14.4201 12.13 14.4201 12.13 14.4201C14.15 14.3501 15.74 12.7101 15.75 10.6801C15.75 8.61005 14.07 6.93005 12 6.93005Z"
+            d="M12 6.93005C9.93 6.93005 8.25 8.61005 8.25 10.6901C8.25 12.7701 9.93 14.4501 12 14.4501C14.07 14.4501 15.75 12.7701 15.75 10.6901C15.75 8.61005 14.07 6.93005 12 6.93005Z"
             fill={`${active == "profile" ? "#DB5350" : "#C1CBD9"} `}
           />
         </svg>

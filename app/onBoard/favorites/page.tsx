@@ -1,21 +1,18 @@
 "use client";
 import { useStore } from "@/store/use-hooks";
 import { toast, ToastContainer, Zoom, Bounce } from "react-toastify";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const Favorites = () => {
   const { favorites, setFavorites, appData, bio } = useStore();
-  const [favorite, setFavorite] = useState("");
+  const [favorite, setFavorite] = useState<string>("");
 
   const router = useRouter();
 
-  function handleDelete(selected) {
-    const items = favorites.filter((item) => {
-      return item !== selected;
-    });
-
+  // Typing the parameter 'selected' as string
+  function handleDelete(selected: string) {
+    const items = favorites.filter((item) => item !== selected);
     setFavorites(items);
   }
 
@@ -36,101 +33,29 @@ const Favorites = () => {
         theme: "dark",
       });
     }
-    favorites.map((i) => {
-      if (i === favorite) {
-        favorites.filter((i) => i == favorite);
-        return toast("🙄علایق تکراری ننویس", {
-          autoClose: 3000,
-          position: "top-center",
-          theme: "dark",
-        });
-      }
-    });
-    const items = favorites.push(favorite);
 
-    const unique = [...new Set(favorites)];
+    // Checking for duplicate favorites
+    if (favorites.includes(favorite)) {
+      return toast("🙄علایق تکراری ننویس", {
+        autoClose: 3000,
+        position: "top-center",
+        theme: "dark",
+      });
+    }
+
+    // Adding the item and ensuring uniqueness
+    const items = [...favorites, favorite];
+    const unique = [...new Set(items)];
 
     setFavorites(unique);
     setFavorite("");
   }
+
   useEffect(() => {
     if (bio == "") router.push(`/#${appData}`);
-  }, []);
-  return (
-    // <div className="fav-container">
-    //   <div className="fav-form">
-    //     <div className="add-fav-container">
-    //       <input
-    //         dir="auto"
-    // value={favorite}
-    // onChange={(e) => {
-    //   setFavorite(e.target.value);
-    // }}
-    //         type="text"
-    //         placeholder="علاقه مندی"
-    //       />
-    //       <button
-    //         disabled={favorites?.length >= 7 || favorite?.length < 3}
-    //         onClick={handleAddItem}
-    //       >
-    //         اضافه کن
-    //       </button>
-    //     </div>
-    //     <div className="fav-list">
-    //       {favorites.map((f, i) => (
-    //         <div className="fav-item">
-    //           <p>{f}</p>
-    //           <div className="" onClick={() => handleDelete(f)}>
-    //             <svg
-    //               xmlns="http://www.w3.org/2000/svg"
-    //               viewBox="0 0 24 24"
-    //               fill="currentColor"
-    //             >
-    //               <path
-    //                 fillRule="evenodd"
-    //                 d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
-    //                 clipRule="evenodd"
-    //               />
-    //             </svg>
-    //           </div>
-    //         </div>
-    //       ))}
-    //       {favorites?.length == 0 ? (
-    //         <div
-    //           style={{
-    //             opacity: "80%",
-    //             margin: "30px",
-    //             width: "100%",
-    //             textAlign: "center",
-    //           }}
-    //         >
-    //           به چیا علاقه داری؟ اضافه کن
-    //         </div>
-    //       ) : (
-    //         ""
-    //       )}
-    //     </div>
-    //   </div>
-    // <button
-    //   onClick={() => {
-    //     router.push("/onBoard/pictures");
-    //   }}
-    //   disabled={favorites.length == 0}
-    //   className="p-3 bg-white w-[70%] mx-auto"
-    //   style={{
-    //     width: "55%",
-    //     padding: "10px",
-    //     display: "block",
-    //     marginLeft: "auto",
-    //     marginRight: "auto",
-    //     marginTop: "5rem",
-    //   }}
-    // >
-    //   ادامه
-    // </button>
-    //   <ToastContainer />
-    // </div>
+  }, [bio, appData, router]);
 
+  return (
     <div
       className=""
       style={{
@@ -179,7 +104,6 @@ const Favorites = () => {
             justifyContent: "space-between",
             background: "#222223",
             borderRadius: "30px",
-
             marginBottom: "25px",
           }}
         >
@@ -188,9 +112,7 @@ const Favorites = () => {
             type="text"
             id="todoText"
             value={favorite}
-            onChange={(e) => {
-              setFavorite(e.target.value);
-            }}
+            onChange={(e) => setFavorite(e.target.value)}
             className="todo-input"
             placeholder="!بنویس"
             style={{

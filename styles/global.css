@@ -2944,7 +2944,7 @@ svg {
   stroke-dashoffset: 0;
   animation: Spinner_dash__OlFzr 1.5s ease-in-out infinite,
     Spinner_greyish__YT_DJ 6s ease-in-out infinite;
-  stroke-linecap: round;
+  strokeLinecap: round;
 }
 @keyframes Spinner_rotate__A5s_D {
   to {
@@ -3949,7 +3949,7 @@ svg {
   height: 14px;
   transform: rotate(45deg);
   stroke: var(--grey);
-  stroke-width: 0.5;
+  strokeWidth: 0.5;
 }
 @keyframes Modal_slide-up__8pvez {
   0% {

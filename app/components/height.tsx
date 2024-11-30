@@ -1,21 +1,16 @@
-// Height.tsx
-"use client";
-
-import Wheel from "./wheel";
-import { useUserStore, useAppStore } from "@/store"; // Adjust the import path as needed
+import React, { useEffect, useState } from "react";
+import Wheel from "@/app/components/wheel";
+import { useStore } from "@/store/use-hooks";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-const Height: React.FC = () => {
-  const { height, setHeight, setSelectedHeight } = useUserStore();
-  const { appData } = useAppStore();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const Height = () => {
+  const { height, setHeight, setSelectedHeight, appData } = useStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-    return () => clearTimeout(timer); // Cleanup on unmount
   }, []);
 
   const router = useRouter();
@@ -62,19 +57,17 @@ const Height: React.FC = () => {
           style={{ width: 70, height: 180, marginLeft: "40px" }}
         >
           <Wheel
-            initIdx={height || 180}
+            initIdx={180}
             length={221}
             width={20}
             loop
             label="cm"
-            onValueChange={(value) => {
-              setHeight(value);
-            }}
+            state={height}
+            setState={setHeight}
           />
         </div>
-
         <div
-          className={` ${!isLoading ? "hidden" : ""} Spinner_wrapper__wnbCd`}
+          className={`${!isLoading ? "hidden" : ""} Spinner_wrapper__wnbCd`}
           style={{ position: "absolute", top: "30%" }}
         >
           <div className="Spinner_container__6yh3a">
@@ -91,14 +84,13 @@ const Height: React.FC = () => {
             </svg>
           </div>
         </div>
-
         <button
-          disabled={height == null || height < 150 || isLoading}
-          className="p-4 text-black mt-3 hover:bg-white hover:text-black transition duration-100 font-bold"
+          disabled={height === null || height < 150 || isLoading}
+          className=" p-4 text-black mt-3 hover:bg-white hover:text-black transition duration-100 text-bold"
           style={{ backgroundColor: "white", width: "40%" }}
           onClick={() => {
-            if (height != null) {
-              setSelectedHeight(height);
+            if (height !== null) {
+              setSelectedHeight(height); 
               router.push(`/onBoard/favorites/#${appData}`);
             }
           }}

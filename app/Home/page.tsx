@@ -30,18 +30,20 @@ const HomePage = () => {
 
   const router = useRouter();
 
-  function changeTime(stamp) {
+  function changeTime(stamp: number): string {
     var date = new Date(stamp * 1000);
 
     // Hours part from the timestamp
     var hours = date.getHours();
 
     // Minutes part from the timestamp
+    var minutes = date.getMinutes();
 
     // Seconds part from the timestamp
+    var seconds = date.getSeconds();
 
     // Will display time in 10:30:23 format
-    var formattedTime = hours;
+    var formattedTime = `${hours}:${minutes}:${seconds}`;
 
     return formattedTime;
   }
@@ -50,8 +52,7 @@ const HomePage = () => {
     try {
       const time = await axios.get("https://api.keybit.ir/time/");
 
-      // console.log(time.data.timestamp.en);
-
+      // If time.data.timestamp.en is a number (like a Unix timestamp)
       setCurrentTime(changeTime(time.data.timestamp.en));
     } catch (err) {
       console.log(err);
@@ -202,7 +203,7 @@ const HomePage = () => {
   }
 
   useEffect(() => {
-    if (currentTime === 23 || currentTime === 0) getRoomKey();
+    if (Number(currentTime) === 23 || Number(currentTime) === 0) getRoomKey();
   }, [currentTime]);
 
   useEffect(() => {
@@ -248,23 +249,23 @@ const HomePage = () => {
           <path
             d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z"
             stroke="#FCFCFC"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z"
             stroke="#FCFCFC"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z"
             stroke="#FCFCFC"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg> */}
           <p
@@ -279,18 +280,31 @@ const HomePage = () => {
 
         <div className="w-full flex flex-col UploadImages_photosContainer__AAIqS2">
           <label>
-            <img src={img1} className="w-full uploaded-img " />
+            <img
+              src={img1 || "/path/to/default-image.jpg"}
+              className="w-full uploaded-img"
+            />
           </label>
           <label>
-            <img src={img2} className="w-full  uploaded-img " />
+            <img
+              src={img2 || "/path/to/default-image.jpg"}
+              className="w-full uploaded-img"
+            />
           </label>
           <label>
-            <img src={img3} className="w-full uploaded-img" />
+            <img
+              src={img3 || "/path/to/default-image.jpg"}
+              className="w-full uploaded-img"
+            />
           </label>
           <label>
-            <img src={img4} className="w-full uploaded-img" />
+            <img
+              src={img4 || "/path/to/default-image.jpg"}
+              className="w-full uploaded-img"
+            />
           </label>
         </div>
+
         <div
           className="w-full  "
           dir="rtl"
@@ -310,7 +324,9 @@ const HomePage = () => {
           </div>
           <div
             className={`profile-icon profile-icon-man ${
-              selectedAge >= 20 ? "profile-icon-man" : "profile-icon-boy"
+              Number(selectedAge) >= 20
+                ? "profile-icon-man"
+                : "profile-icon-boy"
             }`}
           ></div>
         </div>
@@ -330,44 +346,44 @@ const HomePage = () => {
               <path
                 d="M21.4697 19V5C21.4697 3 20.4697 2 18.4697 2H14.4697C12.4697 2 11.4697 3 11.4697 5V19C11.4697 21 12.4697 22 14.4697 22H18.4697C20.4697 22 21.4697 21 21.4697 19Z"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M11.4697 6H16.4697"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M11.4697 18H15.4697"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M11.4697 13.95L16.4697 14"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M11.4697 10H14.4697"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M5.49027 2C3.86027 2 2.53027 3.33 2.53027 4.95V17.91C2.53027 18.36 2.72027 19.04 2.95027 19.43L3.77027 20.79C4.71027 22.36 6.26027 22.36 7.20027 20.79L8.02027 19.43C8.25027 19.04 8.44027 18.36 8.44027 17.91V4.95C8.44027 3.33 7.11027 2 5.49027 2Z"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
               <path
                 d="M8.44027 7H2.53027"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
-                stroke-linecap="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
               />
             </svg>
           </div>
@@ -383,12 +399,12 @@ const HomePage = () => {
               <path
                 d="M11.9999 13.43C13.723 13.43 15.1199 12.0331 15.1199 10.31C15.1199 8.58687 13.723 7.19 11.9999 7.19C10.2768 7.19 8.87988 8.58687 8.87988 10.31C8.87988 12.0331 10.2768 13.43 11.9999 13.43Z"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
+                strokeWidth="1.5"
               />
               <path
                 d="M3.61971 8.49C5.58971 -0.169998 18.4197 -0.159997 20.3797 8.5C21.5297 13.58 18.3697 17.88 15.5997 20.54C13.5897 22.48 10.4097 22.48 8.38971 20.54C5.62971 17.88 2.46971 13.57 3.61971 8.49Z"
                 stroke="#FCFCFC"
-                stroke-width="1.5"
+                strokeWidth="1.5"
               />
             </svg>
           </div>
@@ -397,7 +413,9 @@ const HomePage = () => {
           <p>علاقه مندی ها </p>
           <div className="favorites-list">
             {favorites.map((f) => (
-              <div className="favorites-list-item">{f}</div>
+              <div key={f} className="favorites-list-item">
+                {f}
+              </div>
             ))}
           </div>
         </div>
