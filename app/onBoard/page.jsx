@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Wheel from "../components/wheel.tsx";
+import Wheel from "../../components/wheel.tsx";
 import { citiesData } from "../../data/bataCities";
 import { useStore } from "../../store/use-hooks";
 import Height from "../../components/height";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Wheel from "@/app/components/wheel";
+import Wheel from "@/components/wheel";
 import { useStore } from "@/store/use-hooks";
 import { useRouter } from "next/navigation";
 
