@@ -1,6 +1,6 @@
 "use client";
 import { useStore } from "@/store/use-hooks";
-import { toast, ToastContainer, Zoom, Bounce } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 

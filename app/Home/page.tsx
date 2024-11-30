@@ -1,7 +1,7 @@
 "use client";
 import { useStore } from "@/store/use-hooks";
 import axios from "axios";
-import NavBar from "@/app/components/navBar";
+import NavBar from "@/components/navBar";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 

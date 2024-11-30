@@ -1,7 +1,6 @@
 "use client";
 import { useStore } from "@/store/use-hooks";
-import NavBar from "../components/navBar";
-import SearchFilter from "@/app/components/searchFilter";
+import NavBar from "@/components/navBar";
 
 const Search = () => {
   const {

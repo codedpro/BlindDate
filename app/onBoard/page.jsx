@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Wheel from "../components/wheel.tsx";
 import { citiesData } from "../../data/bataCities";
 import { useStore } from "../../store/use-hooks";
-import Height from "../components/height";
+import Height from "../../components/height";
 
 import { toast, ToastContainer, Zoom, Bounce } from "react-toastify";
 
