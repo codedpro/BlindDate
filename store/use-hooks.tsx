@@ -10,6 +10,7 @@ interface StoreState {
   chatId: string | null;
   chatRoomId: string | null;
   favorites: string[];
+  jobs: string[];
   gender: string;
   token: string;
   provinces: typeof provincesData;
@@ -49,6 +50,8 @@ interface StoreState {
   setSelectedHeight: (num: number) => void;
   setProvinces: (provinces: typeof provincesData) => void;
   setFavorites: (items: string[]) => void;
+  setJobs: (items: string[] | ((prev: string[]) => string[])) => void;
+
   setProvince: (province: string) => void;
   setQuery: (query: string) => void;
   setBio: (bio: string) => void;
@@ -103,6 +106,7 @@ if (typeof window !== "undefined") {
 
 // Default empty favorites array
 const favorites: string[] = [];
+const jobs: string[] = [];
 
 // Zustand store creation with initial state and setters
 export const useStore = create<StoreState>((set) => ({
@@ -112,6 +116,7 @@ export const useStore = create<StoreState>((set) => ({
   chatId: parsed?.user?.id ?? null,
   chatRoomId: null,
   favorites,
+  jobs,
   gender: "",
   token: "",
   provinces: provincesData,
@@ -151,6 +156,10 @@ export const useStore = create<StoreState>((set) => ({
   setSelectedHeight: (num) => set(() => ({ selectedHeight: num })),
   setProvinces: (provinces) => set(() => ({ provinces })),
   setFavorites: (items) => set(() => ({ favorites: items })),
+  setJobs: (items) =>
+    set((state) => ({
+      jobs: typeof items === "function" ? items(state.jobs) : items,
+    })),
   setProvince: (province) => set(() => ({ province })),
   setQuery: (query) => set(() => ({ query })),
   setBio: (bio) => set(() => ({ bio })),
