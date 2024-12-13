@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useStore } from "@/store/use-hooks";
 import { FaBriefcase, FaCheck } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const allJobs = [
   "مهندسی",
@@ -26,6 +26,7 @@ const allJobs = [
 const Job = () => {
   const { jobs, setJobs, appData } = useStore();
   const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams(); 
 
   const router = useRouter();
   const filteredJobs = searchTerm
@@ -61,7 +62,9 @@ const Job = () => {
         position: "top-center",
         theme: "dark",
       });
-      router.push(`/onBoard/pictures/#${appData}`);
+      const currentParams = new URLSearchParams(searchParams.toString());
+
+      router.push(`/onBoard/pictures?${currentParams}`);
     } else {
       toast("❗ حداقل یک شغل را انتخاب کنید", {
         autoClose: 3000,

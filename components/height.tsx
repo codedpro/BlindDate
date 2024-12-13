@@ -2,16 +2,13 @@
 
 import Wheel from "@/components/wheel";
 import { useStore } from "@/store/use-hooks";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Height = () => {
-  const { height, setHeight, setSelectedHeight, appData } = useStore();
+  const { height, setHeight, setSelectedHeight } = useStore();
   const router = useRouter();
+  const searchParams = useSearchParams(); 
 
-  useEffect (() => {
-    console.log(appData, height)
-  }, [height,appData])
   return (
     <>
       <div className="absolute text-center top-7 text-white w-full z-10">
@@ -40,7 +37,9 @@ const Height = () => {
           onClick={() => {
             if (height !== null) {
               setSelectedHeight(height);
-              router.push(`/onBoard/favorites/#${appData}`);
+              const currentParams = new URLSearchParams(searchParams.toString());
+              
+              router.push(`/onBoard/favorites?${currentParams}`);
             }
           }}
         >

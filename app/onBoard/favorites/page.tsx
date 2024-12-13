@@ -2,7 +2,7 @@
 import { useStore } from "@/store/use-hooks";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Checkbox } from "@/components/forms/Checkbox";
 import { FaHeart } from "react-icons/fa";
 
@@ -22,6 +22,7 @@ const predefinedFavorites = [
 const Favorites = () => {
   const { favorites, setFavorites, appData, bio } = useStore();
   const [selectedFavorites, setSelectedFavorites] = useState<string[]>([]);
+  const searchParams = useSearchParams(); 
 
   const router = useRouter();
 
@@ -38,6 +39,7 @@ const Favorites = () => {
       });
     }
   };
+  const currentParams = new URLSearchParams(searchParams.toString());
 
   const handleConfirmFavorites = () => {
     if (selectedFavorites.length >= 1) {
@@ -47,7 +49,7 @@ const Favorites = () => {
         position: "top-center",
         theme: "dark",
       });
-      router.push(`/onBoard/jobs/#${appData}`);
+      router.push(`/onBoard/jobs?${currentParams}`);
     } else {
       toast("❗ حداقل یک مورد را انتخاب کنید", {
         autoClose: 3000,

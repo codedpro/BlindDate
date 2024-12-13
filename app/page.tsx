@@ -2,14 +2,13 @@
 import { format } from "date-fns-tz";
 import { useStore } from "@/store/use-hooks";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 
 function Home() {
   const {
     chatId,
-    appData,
     setGender,
     setSelectedAge,
     setSelectedHeight,
@@ -26,6 +25,9 @@ function Home() {
     setRoomKey,
     setKey,
   } = useStore();
+    const searchParams = useSearchParams(); 
+  
+  const currentParams = new URLSearchParams(searchParams.toString());
 
   const [folder, setFolder] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
@@ -38,7 +40,7 @@ function Home() {
     setChecking(true);
     try {
       const data = {
-        app_data: appData,
+        app_data: currentParams,
       };
 
       const getChannels = await axios.post(
@@ -63,7 +65,7 @@ function Home() {
     try {
       const data = {
         chat_id: chatId,
-        app_data: appData,
+        app_data: currentParams,
       };
 
       const sendData = await axios.post(
@@ -72,7 +74,7 @@ function Home() {
       );
 
       if (sendData.data.status === "User Not Found !") {
-        router.push(`/onBoard/#${appData}`);
+        router.push(`/onBoard/#${currentParams}`);
       }
       const profile = sendData.data.data[0];
 
@@ -104,7 +106,7 @@ function Home() {
       setImg2(`https://api.blinddatepersian.site/images//${folder}/2.png`);
       setImg3(`https://api.blinddatepersian.site/images//${folder}/3.png`);
       setImg4(`https://api.blinddatepersian.site/images//${folder}/4.png`);
-      router.push(`/Home/#${appData}`);
+      router.push(`/Home/#${currentParams}`);
     }
   }, [folder]);
 

@@ -1,14 +1,13 @@
 import { create } from "zustand";
 import { citiesData } from "../data/bataCities";
 import { provincesData } from "../data/provinces";
-import { useTelegram } from "react-telegram-miniapp";
 
 // Define types for the state
 interface StoreState {
   cities: typeof citiesData;
   telegramId: string;
-  appData: string ;
-  chatId: number | null;
+  appData: string | undefined;
+  chatId: string | null;
   chatRoomId: string | null;
   favorites: string[];
   jobs: string[];
@@ -95,16 +94,26 @@ function parseUrlParams(url: string) {
   return result;
 }
 
-const { webApp, user } = useTelegram();
+// If the code is running on the client side, get the hash from the URL
+let parsed: Record<string, any> | undefined;
+let appData: string | undefined;
 
+if (typeof window !== "undefined") {
+  const hash = window?.location.hash.substring(1) || "";
+  parsed = parseUrlParams(decodeURIComponent(hash));
+  appData = window.location.href.split("#")[1];
+}
+
+// Default empty favorites array
 const favorites: string[] = [];
 const jobs: string[] = [];
 
+// Zustand store creation with initial state and setters
 export const useStore = create<StoreState>((set) => ({
   cities: citiesData,
   telegramId: "",
-  appData: webApp?.initData ?? "asd",
-  chatId: user?.id ?? null,
+  appData: appData,
+  chatId: parsed?.user?.id ?? null,
   chatRoomId: null,
   favorites,
   jobs,

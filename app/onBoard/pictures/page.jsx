@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "@/store/use-hooks";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -284,6 +284,8 @@ const Pictures = () => {
       sendData();
     }
   }, [folder]);
+    const searchParams = useSearchParams(); 
+  
   async function sendData() {
     const data = {
       app_data: appData,
@@ -302,8 +304,9 @@ const Pictures = () => {
     req.open("POST", "https://api.blinddatepersian.site/index.php/Login");
     req.send(JSON.stringify(data));
   
-    console.log("Navigating to the next page...");
-    router.push(`/#${appData}`);
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    router.push(`/?${currentParams}`);
   }
 
   useEffect(() => {
@@ -332,7 +335,9 @@ const Pictures = () => {
   }, [img1, img2, img3, img4]);
 
   useEffect(() => {
-    if (bio == "") router.push(`/#${appData}`);
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    if (bio == "") router.push(`/?${currentParams}`);
   }, []);
 
   return (

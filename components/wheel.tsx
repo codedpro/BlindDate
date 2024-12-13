@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useKeenSlider, KeenSliderInstance, KeenSliderOptions } from "keen-slider/react";
 
-// Define type for props
 interface WheelProps {
   state: any; // Replace with the actual type of the state if possible
   setState: (state: any) => void; // Replace with the actual function signature for setting state
@@ -16,7 +15,6 @@ interface WheelProps {
   maxValue?: number; // Maximum value for the range
 }
 
-// Define the component with explicit types for props
 const Wheel: React.FC<WheelProps> = (props) => {
   const sliderState = props.state;
   const setSliderState = props.setState;
@@ -30,10 +28,9 @@ const Wheel: React.FC<WheelProps> = (props) => {
 
   // Calculate value range
   const minValue = props.minValue || 0;
-  const maxValue = props.maxValue || slides - 1; // Default to slide index if no range is given
-  const range = maxValue - minValue;
+  const maxValue = props.maxValue || slides - 1;
+  const range = maxValue - minValue + 1;
 
-  // Define the options type for KeenSlider configuration
   const options = useRef<KeenSliderOptions>({
     slides: {
       number: slides,
@@ -89,8 +86,8 @@ const Wheel: React.FC<WheelProps> = (props) => {
         WebkitTransform: `rotateX(${rotate}deg) translateZ(${radius}px)`,
       };
 
-      // Calculate the value based on the range
-      const value = minValue + Math.round((i / (slides - 1)) * range);
+      // Corrected value calculation for unique mapping
+      const value = minValue + ((i + (props.initIdx || 0)) % range);
       values.push({ style, value });
     }
     return values;
