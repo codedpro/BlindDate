@@ -1,5 +1,3 @@
-// app/page.tsx
-
 "use client";
 import { format } from "date-fns-tz";
 import { useStore } from "@/store/use-hooks";
@@ -7,23 +5,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-
-interface Channel {
-  url: string; // Assuming each channel has a 'url' property
-}
-
-interface Profile {
-  key: string;
-  photos: string;
-  age: number;
-  first_name: string;
-  bio: string;
-  height: number;
-  city: string;
-  favorites: string;
-  gender: number;
-  in_date: string;
-}
 
 function Home() {
   const {
@@ -36,21 +17,20 @@ function Home() {
     setBio,
     setCity,
     setName,
-    setChatRoomID, // Corrected setter name
     setImg1,
     setImg2,
     setImg3,
     setImg4,
-    setKey,
+    key,
     roomkey,
-    setRoomKey, // Corrected setter name
+    setRoomKey,
+    setKey,
   } = useStore();
 
   const [folder, setFolder] = useState<string | null>(null);
-  const [checking, setChecking] = useState<boolean>(false);
-  const [channels, setChannels] = useState<Channel[] | null>(null);
-  const [inDate, setInDate] = useState<string | null>(null); // Added state for inDate
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [checking, setChecking] = useState(false);
+  const [channels, setChannels] = useState<string[] | null>(null);
+  const [currentTime, setCurrentTime] = useState("");
 
   const router = useRouter();
 
@@ -65,10 +45,7 @@ function Home() {
         "https://api.blinddatepersian.site/index.php/CheckJoin",
         JSON.stringify(data)
       );
-      if (
-        getChannels.data.status === false ||
-        getChannels.data.how === "left"
-      ) {
+      if (getChannels.data.status === false || getChannels.data.how === "left") {
         setChannels(getChannels.data.channels);
 
         setTimeout(() => {
@@ -78,12 +55,7 @@ function Home() {
         getProfile();
       }
     } catch (err) {
-      // Ensure that err is either an Error or string to avoid type issues
-      return toast(err instanceof Error ? err.message : String(err), {
-        autoClose: 4000,
-        position: "top-center",
-        theme: "dark",
-      });
+      console.log(err);
     }
   }
 
@@ -102,11 +74,11 @@ function Home() {
       if (sendData.data.status === "User Not Found !") {
         router.push(`/onBoard/#${appData}`);
       }
-      const profile: Profile = sendData.data.data[0];
+      const profile = sendData.data.data[0];
 
-      setKey(profile.key.toString());
+      setKey(profile.key);
       setFolder(profile.photos);
-      setSelectedAge(profile.age.toString());
+      setSelectedAge(profile.age);
       setName(profile.first_name);
       setBio(profile.bio);
       setSelectedHeight(profile.height);
@@ -114,15 +86,11 @@ function Home() {
 
       const str = profile.favorites;
       const arr = str.split(",");
-
-      // حذف عناصر خالی در انتهای آرایه (در صورت وجود)
-      const filteredArr = arr.filter((item) => item !== "");
+      const filteredArr = arr.filter((item: string) => item !== "");
       setGender(profile.gender === 0 ? "male" : "female");
       setFavorites(filteredArr);
-      setInDate(profile.in_date);
     } catch (err) {
-      // Ensure that err is either an Error or string to avoid type issues
-      return toast(err instanceof Error ? err.message : String(err), {
+      toast(err as string, {
         autoClose: 4000,
         position: "top-center",
         theme: "dark",
@@ -142,50 +110,21 @@ function Home() {
 
   useEffect(() => {
     checkChannels();
-    // getProfile();
   }, []);
 
   return (
     <>
       {channels ? (
-        <div
-          style={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#292727",
-              display: "flex",
-              flexDirection: "column",
-              gap: "15px",
-              padding: "7% 7%",
-              zIndex: "1",
-              borderRadius: "12px",
-              textAlign: "end",
-            }}
-          >
-            <h2
-              style={{
-                marginBottom: "25px",
-              }}
-            >
+        <div className="h-screen flex justify-center items-center">
+          <div className="bg-gray-800 flex flex-col gap-4 p-8 z-10 rounded-lg text-right">
+            <h2 className="mb-6">
               :برای ادامه باید در کانال های زیر عضو شوید
             </h2>
             {channels?.map((c, i) => (
               <a
-                href={c.url} // Use 'url' property from Channel object
+                href={c}
+                className={`p-2 border border-white rounded-lg transition-opacity ${checking ? "opacity-60" : ""}`}
                 key={i}
-                style={{
-                  padding: "5px 10px",
-                  border: "1px solid #fff",
-                  borderRadius: "10px",
-                  opacity: checking ? "60%" : "",
-                  transition: "200ms",
-                }}
               >
                 {`کانال شماره ${i + 1}`}
               </a>
@@ -194,16 +133,7 @@ function Home() {
             <button
               disabled={checking}
               onClick={checkChannels}
-              className=""
-              style={{
-                width: "100%",
-                margin: "0 auto",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "12px",
-                backgroundColor: "#b31713",
-                color: "#fff",
-              }}
+              className="w-full mx-auto mb-3 p-2 rounded-lg bg-red-700 text-white disabled:opacity-60"
             >
               بررسی
             </button>
@@ -213,45 +143,18 @@ function Home() {
         ""
       )}
 
-      <h2
-        style={{
-          width: "100%",
-          fontSize: "22px",
-          textAlign: "center",
-          position: "absolute",
-          bottom: "25%",
-        }}
-      >
+      <h2 className="w-full text-lg text-center absolute bottom-[25%]">
         <p className="loading-p">
           درحال بارگذاری <span className="loading-dots">.</span>
           <span className="loading-dots">.</span>
           <span className="loading-dots">.</span>
         </p>
       </h2>
-      <div
-        className="container"
-        style={{
-          position: "absolute",
-          margin: "auto",
-          top: "0",
-          left: "0",
-          bottom: "30%",
-          right: "0",
-          width: "90%",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            color: "#fff",
-            textAlign: "center",
-            fontSize: "30px",
-            marginTop: "20px",
-            fontWeight: "bold",
-          }}
-        >
-          {inDate && format(new Date(inDate), "dd MMM yyyy")}
-        </h1>
+      <div className="container absolute m-auto top-0 left-0 bottom-[30%] right-0 w-full h-[400px]">
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
+        <div className="circle"></div>
       </div>
       <ToastContainer />
     </>

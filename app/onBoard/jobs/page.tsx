@@ -55,14 +55,15 @@ const Job = () => {
   };
 
   const handleConfirm = () => {
-    if (jobs.length === 3) {
+    if (jobs.length >= 1) {
       toast("✅ انتخاب‌ها ثبت شد", {
         autoClose: 3000,
         position: "top-center",
         theme: "dark",
       });
+      router.push(`/onBoard/pictures/#${appData}`);
     } else {
-      toast("❗ دقیقا سه شغل انتخاب کنید", {
+      toast("❗ حداقل یک شغل را انتخاب کنید", {
         autoClose: 3000,
         position: "top-center",
         theme: "dark",
@@ -76,7 +77,7 @@ const Job = () => {
       className="flex flex-col justify-between min-h-screen bg-[#000000] text-white"
     >
       {/* Scrollable Content */}
-      <div className="flex-grow w-full max-w-md mx-auto overflow-y-auto p-4">
+      <div dir="rtl" className="flex-grow w-full max-w-md mx-auto overflow-y-auto h-32 p-4">
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <FaBriefcase className="text-4xl mb-2" />
@@ -120,13 +121,10 @@ const Job = () => {
       {/* Confirm Button at Bottom */}
       <div className="w-full max-w-md mx-auto p-4">
         <button
-          onClick={() => {
-            handleConfirm();
-            router.push(`/onBoard/pictures/#${appData}`);
-          }}
-          disabled={jobs.length !== 3}
+          onClick={handleConfirm}
+          disabled={jobs.length === 0}
           className={`w-full p-3 rounded-lg transition ${
-            jobs.length === 3
+            jobs.length >= 1
               ? "bg-primary-brand hover:bg-secondary-brand"
               : "bg-gray-500 cursor-not-allowed"
           }`}

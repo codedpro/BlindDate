@@ -32,6 +32,9 @@ dependencies:
   react-icons:
     specifier: ^5.4.0
     version: 5.4.0(react@19.0.0-rc-66855b96-20241106)
+  react-telegram-miniapp:
+    specifier: ^0.1.3
+    version: 0.1.3(next@15.0.3)(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106)
   react-toastify:
     specifier: ^10.0.5
     version: 10.0.6(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106)
@@ -2385,6 +2388,18 @@ packages:
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
+
+  /react-telegram-miniapp@0.1.3(next@15.0.3)(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106):
+    resolution: {integrity: sha512-vrDmlJFD3TjRYdpxl4uTYsyVTbA8cbr273ZO5ztat8RmyeSFkGtA+gYAlONU6JH9IFgS0ZumwUkutL0Mxb9yDA==}
+    peerDependencies:
+      next: '>=14.0.0'
+      react: ^18
+      react-dom: ^18
+    dependencies:
+      next: 15.0.3(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106)
+      react: 19.0.0-rc-66855b96-20241106
+      react-dom: 19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106)
+    dev: false
 
   /react-toastify@10.0.6(react-dom@19.0.0-rc-66855b96-20241106)(react@19.0.0-rc-66855b96-20241106):
     resolution: {integrity: sha512-yYjp+omCDf9lhZcrZHKbSq7YMuK0zcYkDFTzfRFgTXkTFHZ1ToxwAonzA4JI5CxA91JpjFLmwEsZEgfYfOqI1A==}

@@ -27,6 +27,7 @@ const Pictures = () => {
     setImg3,
     setImg4,
   } = useStore();
+
   const [file1, setFile1] = useState("");
   const [file2, setFile2] = useState("");
   const [file3, setFile3] = useState("");
@@ -51,155 +52,120 @@ const Pictures = () => {
   const forthRef = useRef();
   const isFirstRender = useRef(true);
 
-  function getDistance() {
-    setIsLoading(true);
-    (async () => {
-      // loading the models
-      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      await faceapi.nets.faceExpressionNet.loadFromUri("/models");
-      await faceapi.nets.ageGenderNet.loadFromUri("/models");
+  async function loadFaceModels() {
+    await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+    await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+    await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+    await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+    await faceapi.nets.faceExpressionNet.loadFromUri("/models");
+    await faceapi.nets.ageGenderNet.loadFromUri("/models");
+  }
 
-      // detect a single face from the ID card image
-      const firstPic = await faceapi
-        .detectSingleFace(
-          firstRef.current,
-          new faceapi.TinyFaceDetectorOptions()
-        )
-        .withFaceLandmarks()
-        .withFaceDescriptor()
-        .withAgeAndGender();
-
-      // detect a single face from the selfie image
-      const secondPic = await faceapi
-        .detectSingleFace(
-          secondRef.current,
-          new faceapi.TinyFaceDetectorOptions({
-            inputSize: 416, // می‌توانید این مقدار را تغییر دهید
-            scoreThreshold: 0.2, // می‌توانید این مقدار را کاهش دهید
-          })
-        )
-        .withFaceLandmarks()
-        .withFaceDescriptor()
-        .withAgeAndGender();
-
-      // Using Euclidean distance to comapare face descriptions
-
-      if (firstPic && secondPic) {
-        const distance = faceapi.euclideanDistance(
-          firstPic.descriptor,
-          secondPic.descriptor
-        );
-
-        setDistance1(distance);
-      } else if (!firstPic) {
-        toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
-          autoClose: 4000,
-          position: "top-center",
-          theme: "dark",
-        });
+  function setImageState(index) {
+    switch (index) {
+      case 1:
         setImg1(null);
         setnumImages(numImages - 1);
-        console.log("first picture is not valid");
-      } else if (!secondPic) {
-        toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
-          autoClose: 4000,
-          position: "top-center",
-          theme: "dark",
-        });
-        setnumImages(numImages - 1);
+        break;
+      case 2:
         setImg2(null);
-      }
-    })();
-
-    (async () => {
-      // loading the models
-      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      await faceapi.nets.faceExpressionNet.loadFromUri("/models");
-      await faceapi.nets.ageGenderNet.loadFromUri("/models");
-
-      // detect a single face from the ID card image
-      const thridPic = await faceapi
-        .detectSingleFace(
-          thridRef.current,
-          new faceapi.TinyFaceDetectorOptions()
-        )
-        .withFaceLandmarks()
-        .withFaceDescriptor()
-        .withAgeAndGender();
-
-      // detect a single face from the selfie image
-      const forthPic = await faceapi
-        .detectSingleFace(
-          forthRef.current,
-          new faceapi.TinyFaceDetectorOptions({
-            inputSize: 416, // می‌توانید این مقدار را تغییر دهید
-            scoreThreshold: 0.2, // می‌توانید این مقدار را کاهش دهید
-          })
-        )
-        .withFaceLandmarks()
-        .withFaceDescriptor()
-        .withAgeAndGender();
-
-      // Using Euclidean distance to comapare face descriptions
-
-      if (thridPic && forthPic) {
-        const distance = faceapi.euclideanDistance(
-          thridPic.descriptor,
-          forthPic.descriptor
-        );
-
-        setDistance2(distance);
-
-        setIsLoading(false);
-      } else if (!thridPic) {
-        toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
-          autoClose: 4000,
-          position: "top-center",
-          theme: "dark",
-        });
+        setnumImages(numImages - 1);
+        break;
+      case 3:
         setImg3(null);
         setnumImages(numImages - 1);
-        setIsLoading(false);
-        console.log("thrid picture is not valid");
-      } else if (!forthPic) {
-        toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
-          autoClose: 4000,
-          position: "top-center",
-          theme: "dark",
-        });
-        console.log("forth picture is not valid");
-        setIsLoading(false);
-        setnumImages(numImages - 1);
+        break;
+      case 4:
         setImg4(null);
-      }
-    })();
+        setnumImages(numImages - 1);
+        break;
+      default:
+        break;
+    }
+  }
+  async function detectFace(ref, options = {}) {
+    return await faceapi
+      .detectSingleFace(ref.current, new faceapi.TinyFaceDetectorOptions(options))
+      .withFaceLandmarks()
+      .withFaceDescriptor()
+      .withAgeAndGender();
+  }
 
-    // console.log(distance1, distance2);
+  async function getDistance() {
+    console.log("Loading face models...");
+    setIsLoading(true);
+    await loadFaceModels();
+  
+    console.log("Detecting faces for the first image...");
+    const firstPic = await detectFace(firstRef);
+    console.log("First picture face detection result:", firstPic);
+  
+    console.log("Detecting faces for the second image...");
+    const secondPic = await detectFace(secondRef, { inputSize: 416, scoreThreshold: 0.2 });
+    console.log("Second picture face detection result:", secondPic);
+  
+    if (firstPic && secondPic) {
+      const dis = faceapi.euclideanDistance(firstPic.descriptor, secondPic.descriptor);
+      console.log("Computed distance between first and second images:", dis);
+      setDistance1(dis);
+    } else {
+      console.warn("Face detection failed for one or both images.");
+      handleFaceDetectionFailure(firstPic, secondPic, 1, 2);
+    }
+  
+    console.log("Reloading face models...");
+    await loadFaceModels();
+  
+    console.log("Detecting faces for the third image...");
+    const thridPic = await detectFace(thridRef);
+    console.log("Third picture face detection result:", thridPic);
+  
+    console.log("Detecting faces for the fourth image...");
+    const forthPic = await detectFace(forthRef, { inputSize: 416, scoreThreshold: 0.2 });
+    console.log("Fourth picture face detection result:", forthPic);
+  
+    if (thridPic && forthPic) {
+      const dis = faceapi.euclideanDistance(thridPic.descriptor, forthPic.descriptor);
+      console.log("Computed distance between third and fourth images:", dis);
+      setDistance2(dis);
+    } else {
+      console.warn("Face detection failed for one or both images.");
+      handleFaceDetectionFailure(thridPic, forthPic, 3, 4);
+    }
+    setIsLoading(false);
+  }
+
+  function handleFaceDetectionFailure(firstPic, secondPic, firstIndex, secondIndex) {
+    toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
+      autoClose: 4000,
+      position: "top-center",
+      theme: "dark",
+    });
+    if (!firstPic) {
+      setImageState(firstIndex);
+    }
+    if (!secondPic) {
+      setImageState(secondIndex);
+    }
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    console.log("Submit button clicked. Starting process...");
+  
     toast("صبر کن هوش مصنوعی عکساتو چک کنه. شاید ۴۰ ثانیه طول بکشه", {
       autoClose: 6000,
       position: "top-center",
       theme: "dark",
     });
-
-    const files = [file1.name, file2.name, file3.name, file4.name];
-
+  
+    const files = [file1?.name, file2?.name, file3?.name, file4?.name].filter(Boolean);
     const allUnique = new Set(files).size === images.length;
-
-    if (allUnique) {
-      console.log("All images are unique.");
-      getDistance();
-    } else {
+  
+    console.log("Uploaded files:", files);
+    console.log("Are all uploaded images unique?", allUnique);
+  
+    if (!allUnique) {
       toast("عکس تکراری آپلود نکن", {
         autoClose: 2000,
         position: "top-center",
@@ -207,30 +173,57 @@ const Pictures = () => {
       });
       return;
     }
-
+  
     if (isFirstRender.current) {
-      // Prevent the function from executing on the first render
-      isFirstRender.current = false; // toggle flag after first render/mounting
+      isFirstRender.current = false;
       return;
     }
+  
+    console.log("Calling getDistance to verify face descriptors...");
+    getDistance();
   };
 
-  function handleChange(e) {
+  function handleImageChange(e, imgIndex) {
     const file = e.target.files[0];
-
-    if (file) {
-      setWarn(false);
-
-      setFile1(file);
-    }
-
     if (!file) {
       console.error("No file selected.");
       return;
     }
+    setWarn(false);
+
+    let currentImg = null;
+    let setFileFunc = null;
+    let setImgFunc = null;
+
+    switch (imgIndex) {
+      case 1:
+        currentImg = img1;
+        setFileFunc = setFile1;
+        setImgFunc = setImg1;
+        break;
+      case 2:
+        currentImg = img2;
+        setFileFunc = setFile2;
+        setImgFunc = setImg2;
+        break;
+      case 3:
+        currentImg = img3;
+        setFileFunc = setFile3;
+        setImgFunc = setImg3;
+        break;
+      case 4:
+        currentImg = img4;
+        setFileFunc = setFile4;
+        setImgFunc = setImg4;
+        break;
+      default:
+        break;
+    }
+
+    setFileFunc(file);
 
     setnumImages((prevNumImages) => {
-      if (img1 == null || img1 == "") {
+      if (currentImg == null || currentImg == "") {
         return prevNumImages + 1;
       }
       return prevNumImages;
@@ -238,113 +231,38 @@ const Pictures = () => {
 
     const reader = new FileReader();
     reader.addEventListener("load", () => {
-      setImg1(reader.result);
-    });
-    reader.readAsDataURL(file);
-  }
-  function handleChange2(e) {
-    const file = e.target.files[0];
-
-    if (file) {
-      setWarn(false);
-      setFile2(file);
-    }
-
-    if (!file) {
-      console.error("No file selected.");
-      return;
-    }
-
-    setnumImages((prevNumImages) => {
-      if (img2 == null || img2 == "") {
-        return prevNumImages + 1;
-      }
-      return prevNumImages;
-    });
-
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      setImg2(reader.result);
-    });
-    reader.readAsDataURL(file);
-  }
-  function handleChange3(e) {
-    const file = e.target.files[0];
-
-    if (file) {
-      setWarn(false);
-
-      setFile3(file);
-    }
-    if (!file) {
-      console.error("No file selected.");
-      return;
-    }
-
-    setnumImages((prevNumImages) => {
-      if (img3 == null || img3 == "") {
-        return prevNumImages + 1;
-      }
-      return prevNumImages;
-    });
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      setImg3(reader.result);
-    });
-    reader.readAsDataURL(file);
-  }
-  function handleChange4(e) {
-    const file = e.target.files[0];
-
-    if (file) {
-      setWarn(false);
-      setFile4(file);
-    }
-
-    if (!file) {
-      console.error("No file selected.");
-      return;
-    }
-
-    setnumImages((prevNumImages) => {
-      if (img4 == null || img4 == "") {
-        return prevNumImages + 1;
-      }
-      return prevNumImages;
-    });
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      setImg4(reader.result);
+      setImgFunc(reader.result);
     });
     reader.readAsDataURL(file);
   }
 
   useEffect(() => {
-    const images = document?.querySelectorAll(".uploaded-img");
+    const uploadedImages = document?.querySelectorAll(".uploaded-img");
     if (isLoading) {
-      images.forEach((image) => {
+      uploadedImages.forEach((image) => {
         image.style.opacity = "50%";
       });
     } else {
-      images.forEach((image) => {
+      uploadedImages.forEach((image) => {
         image.style.opacity = "100%";
       });
     }
   }, [isLoading]);
 
   async function sendImages() {
+    console.log("Starting image upload...");
     setIsLoading(true);
     const files = [file1, file2, file3, file4];
     const imagesData = new FormData();
-
+  
     files.forEach((file, i) => {
-      imagesData.append(
-        `${i == 0 ? "a" : i == 1 ? "b" : i == 2 ? "c" : "d"}`,
-        file
-      );
+      const key = i === 0 ? "a" : i === 1 ? "b" : i === 2 ? "c" : "d";
+      console.log(`Appending file ${key}:`, file);
+      imagesData.append(key, file);
     });
-
+  
     try {
+      console.log("Sending image data to server...");
       const sendimages = await axios.post(
         "https://api.blinddatepersian.site/index.php",
         imagesData,
@@ -354,18 +272,18 @@ const Pictures = () => {
           },
         }
       );
-
+      console.log("Image upload successful. Received folder name:", sendimages.data.folder_name);
       setFolder(sendimages.data.folder_name);
     } catch (error) {
-      console.error(error);
+      console.error("Error during image upload:", error);
     }
   }
+
   useEffect(() => {
     if (folder !== null) {
       sendData();
     }
   }, [folder]);
-
   async function sendData() {
     const data = {
       app_data: appData,
@@ -378,11 +296,13 @@ const Pictures = () => {
       favorites,
       photos: folder,
     };
-
+    console.log("Sending user data to server:", data);
+  
     var req = new XMLHttpRequest();
     req.open("POST", "https://api.blinddatepersian.site/index.php/Login");
     req.send(JSON.stringify(data));
-
+  
+    console.log("Navigating to the next page...");
     router.push(`/#${appData}`);
   }
 
@@ -398,17 +318,16 @@ const Pictures = () => {
         position: "top-center",
         theme: "dark",
       });
-      return; // از اینجا خارج می‌شود و بقیه کد اجرا نمی‌شود
+      return;
     }
 
     if (distance1 > 0 && distance2 > 0) {
       sendImages();
-      return; // از اینجا هم خارج می‌شود
+      return;
     }
   }, [distance]);
 
   useEffect(() => {
-    console.log();
     setImages([img1, img2, img3, img4]);
   }, [img1, img2, img3, img4]);
 
@@ -424,28 +343,15 @@ const Pictures = () => {
           <div className="flex flex-col h-full">
             <div className="flex space-x-2 px-4 h-[3px] box-content bg-secondary pt-2">
               <div className="1 flex-1 rounded-full bg-step-item relative">
-                <div
-                  className="absolute h-full rounded-full bg-text-primary transition-width duration-300"
-                  style={{ width: "100%" }}
-                ></div>
+                <div className="absolute h-full w-full rounded-full bg-text-primary transition-width duration-300"></div>
               </div>
 
               <div className="4 flex-1 rounded-full bg-step-item relative animate-pop">
-                <div
-                  className="absolute h-full rounded-full bg-text-primary transition-width duration-300"
-                  style={{ width: "100%" }}
-                ></div>
+                <div className="absolute h-full w-full rounded-full bg-text-primary transition-width duration-300"></div>
               </div>
             </div>
             <div className="w-full flex-1 overflow-hidden h-full bg-secondary">
-              <div
-                className="flex flex-col items-start w-full h-full"
-                style={{
-                  transition: "transform, opacity",
-                  transform: "translateX(0px)",
-                  opacity: "1",
-                }}
-              >
+              <div className="flex flex-col items-start w-full h-full transform translate-x-0 opacity-100 transition">
                 <div className="dark UploadImages_container__P_6Gx StepTwo_container__8m6Lm w-full">
                   <div className="UploadImages_photosCountContainer__xDlxD">
                     <div className="px-4">
@@ -456,11 +362,8 @@ const Pictures = () => {
                     </span>
                   </div>
                   <div className="UploadImages_photosContainer__AAIqS">
-                    <label
-                      className="UploadImages_label__AVCyC"
-                      htmlFor="file-0"
-                    >
-                      {!img1 ? (
+                    <label className="UploadImages_label__AVCyC" htmlFor="file-0">
+                      {!img1 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -472,8 +375,6 @@ const Pictures = () => {
                             clipRule="evenodd"
                           ></path>
                         </svg>
-                      ) : (
-                        ""
                       )}
 
                       <input
@@ -481,20 +382,14 @@ const Pictures = () => {
                         id="file-0"
                         accept="image/jpeg, image/jpg, image/png, image/heic, image/heif"
                         type="file"
-                        onChange={handleChange}
+                        onChange={(e) => handleImageChange(e, 1)}
                       />
-                      <img
-                        src={img1}
-                        ref={firstRef}
-                        id="#image"
-                        className={`${img1 ? "w-full" : ""} uploaded-img`}
-                      />
+                      {img1 && (
+                        <img src={img1} ref={firstRef} className="w-full uploaded-img" />
+                      )}
                     </label>
-                    <label
-                      className="UploadImages_label__AVCyC"
-                      htmlFor="file-1"
-                    >
-                      {!img2 ? (
+                    <label className="UploadImages_label__AVCyC" htmlFor="file-1">
+                      {!img2 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -506,27 +401,20 @@ const Pictures = () => {
                             clipRule="evenodd"
                           ></path>
                         </svg>
-                      ) : (
-                        ""
                       )}
                       <input
                         className="UploadImages_input__yZT_X"
                         id="file-1"
                         accept="image/jpeg, image/jpg, image/png, image/heic, image/heif"
                         type="file"
-                        onChange={handleChange2}
+                        onChange={(e) => handleImageChange(e, 2)}
                       />
-                      <img
-                        src={img2}
-                        ref={secondRef}
-                        className={`${img2 ? "w-full" : ""} uploaded-img`}
-                      />
+                      {img2 && (
+                        <img src={img2} ref={secondRef} className="w-full uploaded-img" />
+                      )}
                     </label>
-                    <label
-                      className="UploadImages_label__AVCyC"
-                      htmlFor="file-2"
-                    >
-                      {!img3 ? (
+                    <label className="UploadImages_label__AVCyC" htmlFor="file-2">
+                      {!img3 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -538,27 +426,20 @@ const Pictures = () => {
                             clipRule="evenodd"
                           ></path>
                         </svg>
-                      ) : (
-                        ""
                       )}
                       <input
                         className="UploadImages_input__yZT_X"
                         id="file-2"
                         accept="image/jpeg, image/jpg, image/png, image/heic, image/heif"
                         type="file"
-                        onChange={handleChange3}
+                        onChange={(e) => handleImageChange(e, 3)}
                       />
-                      <img
-                        src={img3}
-                        ref={thridRef}
-                        className={`${img3 ? "w-full" : ""} uploaded-img`}
-                      />
+                      {img3 && (
+                        <img src={img3} ref={thridRef} className="w-full uploaded-img" />
+                      )}
                     </label>
-                    <label
-                      className="UploadImages_label__AVCyC"
-                      htmlFor="file-3"
-                    >
-                      {!img4 ? (
+                    <label className="UploadImages_label__AVCyC" htmlFor="file-3">
+                      {!img4 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -570,28 +451,21 @@ const Pictures = () => {
                             clipRule="evenodd"
                           ></path>
                         </svg>
-                      ) : (
-                        ""
                       )}
                       <input
                         className="UploadImages_input__yZT_X"
                         id="file-3"
                         accept="image/jpeg, image/jpg, image/png, image/heic, image/heif"
                         type="file"
-                        onChange={handleChange4}
+                        onChange={(e) => handleImageChange(e, 4)}
                       />
-                      <img
-                        src={img4}
-                        ref={forthRef}
-                        className={`${img4 ? "w-full" : ""} uploaded-img`}
-                      />
+                      {img4 && (
+                        <img src={img4} ref={forthRef} className="w-full uploaded-img" />
+                      )}
                     </label>
                   </div>
                   <div className="px-[15px]">
-                    <p
-                      className="UploadImages_text__sNerD UploadImages_textInfo__OZoiz"
-                      style={{ textAlign: "end" }}
-                    >
+                    <p className="UploadImages_text__sNerD UploadImages_textInfo__OZoiz text-end">
                       {text}
                     </p>
                   </div>
@@ -604,15 +478,7 @@ const Pictures = () => {
       <button
         disabled={numImages < 4 || warn}
         onClick={handleSubmit}
-        className="p-3 bg-white mt-4 w-[70%] mx-auto"
-        style={{
-          width: "55%",
-          padding: "10px",
-          display: "block",
-          marginLeft: "auto",
-          marginRight: "auto",
-          color: "black",
-        }}
+        className="p-[10px] w-[55%] block mx-auto text-black bg-white mt-4"
       >
         ادامه
       </button>

@@ -1,64 +1,31 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
 import Wheel from "@/components/wheel";
 import { useStore } from "@/store/use-hooks";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Height = () => {
   const { height, setHeight, setSelectedHeight, appData } = useStore();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }, []);
-
   const router = useRouter();
 
+  useEffect (() => {
+    console.log(appData, height)
+  }, [height,appData])
   return (
     <>
-      <div
-        style={{
-          position: "absolute",
-          textAlign: "center",
-          top: "28px",
-          color: "#fff",
-          width: "100%",
-          zIndex: 1,
-        }}
-      >
+      <div className="absolute text-center top-7 text-white w-full z-10">
         <h1>قد</h1>
-        <p
-          style={{
-            opacity: "70%",
-            fontSize: "small",
-          }}
-        >
-          قدت چنده؟
-        </p>
+        <p className="opacity-70 text-sm">قدت چنده؟</p>
       </div>
 
-      <div
-        style={{
-          height: "100%",
-          display: "flex",
-          position: "absolute",
-          flexDirection: "column",
-          width: "100%",
-          top: "0px",
-          left: "0px",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          background: "#000",
-        }}
-      >
-        <div
-          className={`${isLoading ? "z-[-1]" : ""}`}
-          style={{ width: 70, height: 180, marginLeft: "40px" }}
-        >
+      <div className="absolute flex flex-col w-full h-full top-0 left-0 justify-evenly items-center bg-black">
+        <div className="w-[70px] h-[180px] ml-10"> 
           <Wheel
             initIdx={180}
             length={221}
+            minValue={149}
+            maxValue={220}
             width={20}
             loop
             label="cm"
@@ -66,31 +33,13 @@ const Height = () => {
             setState={setHeight}
           />
         </div>
-        <div
-          className={`${!isLoading ? "hidden" : ""} Spinner_wrapper__wnbCd`}
-          style={{ position: "absolute", top: "30%" }}
-        >
-          <div className="Spinner_container__6yh3a">
-            <svg className="Spinner_circular__lPlDK" viewBox="25 25 50 50">
-              <circle
-                className="Spinner_path__auhlW"
-                cx="50"
-                cy="50"
-                r="20"
-                fill="none"
-                strokeWidth="4"
-                strokeMiterlimit="10"
-              ></circle>
-            </svg>
-          </div>
-        </div>
+
         <button
-          disabled={height === null || height < 150 || isLoading}
-          className=" p-4 text-black mt-3 hover:bg-white hover:text-black transition duration-100 text-bold"
-          style={{ backgroundColor: "white", width: "40%" }}
+          disabled={height === null || height < 150}
+          className="w-3/4 p-3 bg-primary-brand rounded text-white disabled:bg-gray-500 disabled:cursor-not-allowed"
           onClick={() => {
             if (height !== null) {
-              setSelectedHeight(height); 
+              setSelectedHeight(height);
               router.push(`/onBoard/favorites/#${appData}`);
             }
           }}

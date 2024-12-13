@@ -12,6 +12,8 @@ interface WheelProps {
   setValue?: (index: number, value: number) => any;
   width: number;
   label?: string;
+  minValue?: number; // Minimum value for the range
+  maxValue?: number; // Maximum value for the range
 }
 
 // Define the component with explicit types for props
@@ -25,6 +27,11 @@ const Wheel: React.FC<WheelProps> = (props) => {
   const slideDegree = 360 / wheelSize;
   const slidesPerView = props.loop ? 9 : 1;
   const size = useRef(0);
+
+  // Calculate value range
+  const minValue = props.minValue || 0;
+  const maxValue = props.maxValue || slides - 1; // Default to slide index if no range is given
+  const range = maxValue - minValue;
 
   // Define the options type for KeenSlider configuration
   const options = useRef<KeenSliderOptions>({
@@ -40,8 +47,7 @@ const Wheel: React.FC<WheelProps> = (props) => {
       const height = size.current;
       return (
         val *
-        (height /
-          ((height / 2) * Math.tan(slideDegree * (Math.PI / 180))) /
+        (height / ((height / 2) * Math.tan(slideDegree * (Math.PI / 180))) /
           slidesPerView)
       );
     },
@@ -70,7 +76,6 @@ const Wheel: React.FC<WheelProps> = (props) => {
     const offset = props.loop ? 1 / 2 - 1 / slidesPerView / 2 : 0;
 
     const values = [];
-
     for (let i = 0; i < slides; i++) {
       const distance = sliderState
         ? (sliderState.slides[i].distance - offset) * slidesPerView
@@ -83,9 +88,9 @@ const Wheel: React.FC<WheelProps> = (props) => {
         transform: `rotateX(${rotate}deg) translateZ(${radius}px)`,
         WebkitTransform: `rotateX(${rotate}deg) translateZ(${radius}px)`,
       };
-      const value = props.setValue
-        ? props.setValue(i, sliderState.abs + Math.round(distance))
-        : i;
+
+      // Calculate the value based on the range
+      const value = minValue + Math.round((i / (slides - 1)) * range);
       values.push({ style, value });
     }
     return values;
@@ -93,6 +98,7 @@ const Wheel: React.FC<WheelProps> = (props) => {
 
   return (
     <div
+      dir="ltr"
       className={"wheel keen-slider wheel--perspective-" + perspective}
       ref={sliderRef}
     >

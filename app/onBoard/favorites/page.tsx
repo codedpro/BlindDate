@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/forms/Checkbox";
-import { FaHeart } from "react-icons/fa"; // Import React Icon
+import { FaHeart } from "react-icons/fa";
 
 const predefinedFavorites = [
   "ورزش",
@@ -40,15 +40,16 @@ const Favorites = () => {
   };
 
   const handleConfirmFavorites = () => {
-    if (selectedFavorites.length === 3) {
+    if (selectedFavorites.length >= 1) {
       setFavorites(selectedFavorites);
       toast("✅ انتخاب‌ها ثبت شد", {
         autoClose: 3000,
         position: "top-center",
         theme: "dark",
       });
+      router.push(`/onBoard/jobs/#${appData}`);
     } else {
-      toast("❗ دقیقا سه مورد انتخاب کنید", {
+      toast("❗ حداقل یک مورد را انتخاب کنید", {
         autoClose: 3000,
         position: "top-center",
         theme: "dark",
@@ -61,17 +62,13 @@ const Favorites = () => {
   }, [bio, appData, router]);
 
   return (
-    <div
-      className="flex flex-col justify-between min-h-screen bg-[#000000] text-white"
-    >
-      {/* Content */}
-      <div className="flex-grow w-full max-w-lg mx-auto overflow-y-auto p-4">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-white">
+      <div dir="rtl" className="flex-grow w-full max-w-lg mx-auto h-32 overflow-y-auto p-4">
         <div className="w-full bg-[#1c1c1d] p-6 rounded-lg">
           <div className="flex items-center justify-center mb-5">
-            <FaHeart className="text-red-500 text-2xl mr-2" /> {/* Icon */}
+            <FaHeart className="text-red-500 text-2xl ml-2" />
             <h2 className="text-lg font-bold text-center">علاقه مندی ها</h2>
           </div>
-          {/* Checkbox List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {predefinedFavorites.map((fav, index) => (
               <Checkbox
@@ -87,14 +84,10 @@ const Favorites = () => {
           </div>
         </div>
       </div>
-      {/* Button at the Bottom */}
       <div className="w-full p-4">
         <button
-          onClick={() => {
-            handleConfirmFavorites();
-            router.push(`/onBoard/jobs/#${appData}`);
-          }}
-          disabled={selectedFavorites.length !== 3}
+          onClick={handleConfirmFavorites}
+          disabled={selectedFavorites.length < 1}
           className="w-full p-3 bg-primary-brand rounded text-white disabled:bg-gray-500"
         >
           ادامه
