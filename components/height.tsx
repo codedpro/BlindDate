@@ -37,9 +37,9 @@ const Height = () => {
           onClick={() => {
             if (height !== null) {
               setSelectedHeight(height);
-              const currentParams = new URLSearchParams(searchParams.toString());
+              const currentParams = window.location.hash.substring(1);
               
-              router.push(`/onBoard/favorites?${currentParams}`);
+              router.push(`/onBoard/favorites#${currentParams}`);
             }
           }}
         >

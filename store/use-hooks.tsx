@@ -1,3 +1,4 @@
+"use client"
 import { create } from "zustand";
 import { citiesData } from "../data/bataCities";
 import { provincesData } from "../data/provinces";

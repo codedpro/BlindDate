@@ -39,7 +39,7 @@ const Favorites = () => {
       });
     }
   };
-  const currentParams = new URLSearchParams(searchParams.toString());
+  const currentParams = window.location.hash.substring(1);
 
   const handleConfirmFavorites = () => {
     if (selectedFavorites.length >= 1) {
@@ -49,7 +49,7 @@ const Favorites = () => {
         position: "top-center",
         theme: "dark",
       });
-      router.push(`/onBoard/jobs?${currentParams}`);
+      router.push(`/onBoard/jobs#${currentParams}`);
     } else {
       toast("❗ حداقل یک مورد را انتخاب کنید", {
         autoClose: 3000,

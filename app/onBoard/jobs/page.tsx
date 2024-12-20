@@ -62,9 +62,9 @@ const Job = () => {
         position: "top-center",
         theme: "dark",
       });
-      const currentParams = new URLSearchParams(searchParams.toString());
+      const currentParams = window.location.hash.substring(1);
 
-      router.push(`/onBoard/pictures?${currentParams}`);
+      router.push(`/onBoard/pictures#${currentParams}`);
     } else {
       toast("❗ حداقل یک شغل را انتخاب کنید", {
         autoClose: 3000,

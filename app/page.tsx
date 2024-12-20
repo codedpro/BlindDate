@@ -1,5 +1,4 @@
 "use client";
-import { format } from "date-fns-tz";
 import { useStore } from "@/store/use-hooks";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,7 +26,6 @@ function Home() {
   } = useStore();
     const searchParams = useSearchParams(); 
   
-  const currentParams = new URLSearchParams(searchParams.toString());
 
   const [folder, setFolder] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
@@ -35,14 +33,24 @@ function Home() {
   const [currentTime, setCurrentTime] = useState("");
 
   const router = useRouter();
+  const currentParams = window.location.hash.substring(1);
+  const hash = window.location.hash.substring(1);
 
   async function checkChannels() {
     setChecking(true);
+
+    if (!hash) {
+      console.error("No hash found in the URL.");
+      setChecking(false);
+      return;
+    }
+
+
+
     try {
       const data = {
-        app_data: currentParams,
+        app_data: hash,
       };
-
       const getChannels = await axios.post(
         "https://api.blinddatepersian.site/index.php/CheckJoin",
         JSON.stringify(data)
@@ -65,16 +73,17 @@ function Home() {
     try {
       const data = {
         chat_id: chatId,
-        app_data: currentParams,
+        app_data: hash,
       };
 
       const sendData = await axios.post(
         "https://api.blinddatepersian.site/index.php/GetProfile",
         JSON.stringify(data)
       );
-
+      console.log(sendData);
       if (sendData.data.status === "User Not Found !") {
-        router.push(`/onBoard/#${currentParams}`);
+        console.log(data)
+     //   router.push(`/onBoard/#${hash}`);
       }
       const profile = sendData.data.data[0];
 

@@ -21,7 +21,7 @@ const Pictures = () => {
     img3,
     img4,
     favorites,
-    appData,
+    
     setImg1,
     setImg2,
     setImg3,
@@ -284,11 +284,11 @@ const Pictures = () => {
       sendData();
     }
   }, [folder]);
-    const searchParams = useSearchParams(); 
   
   async function sendData() {
+    const currentParams = window.location.hash.substring(1);
     const data = {
-      app_data: appData,
+      app_data: currentParams,
       bio,
       gender: `${gender == "male" ? 0 : 1}`,
       city,
@@ -298,16 +298,29 @@ const Pictures = () => {
       favorites,
       photos: folder,
     };
+  
     console.log("Sending user data to server:", data);
   
-    var req = new XMLHttpRequest();
-    req.open("POST", "https://api.blinddatepersian.site/index.php/Login");
-    req.send(JSON.stringify(data));
+    try {
+      const response = await fetch("https://api.blinddatepersian.site/index.php/Login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
   
-    const currentParams = new URLSearchParams(searchParams.toString());
-
-    router.push(`/?${currentParams}`);
+      if (response.status === 200) {
+        console.log("Server response:", await response.json());
+        router.push(`/#${currentParams}`);
+      } else {
+        console.error("Server responded with an error:", response.status);
+      }
+    } catch (error) {
+      console.error("Error sending data to server:", error);
+    }
   }
+  
 
   useEffect(() => {
     setDistance((distance1 + distance2) / 2);
@@ -335,9 +348,9 @@ const Pictures = () => {
   }, [img1, img2, img3, img4]);
 
   useEffect(() => {
-    const currentParams = new URLSearchParams(searchParams.toString());
+    const currentParams = window.location.hash.substring(1);
 
-    if (bio == "") router.push(`/?${currentParams}`);
+    if (bio == "") router.push(`/#${currentParams}`);
   }, []);
 
   return (
@@ -483,7 +496,7 @@ const Pictures = () => {
       <button
         disabled={numImages < 4 || warn}
         onClick={handleSubmit}
-        className="p-[10px] w-[55%] block mx-auto text-black bg-white mt-4"
+        className="p-[10px] w-[55%] block mx-auto  bg-primary-brand text-white disabled:bg-gray-500 mt-4"
       >
         ادامه
       </button>
