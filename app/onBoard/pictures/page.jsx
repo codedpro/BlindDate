@@ -21,7 +21,7 @@ const Pictures = () => {
     img3,
     img4,
     favorites,
-    
+
     setImg1,
     setImg2,
     setImg3,
@@ -85,7 +85,10 @@ const Pictures = () => {
   }
   async function detectFace(ref, options = {}) {
     return await faceapi
-      .detectSingleFace(ref.current, new faceapi.TinyFaceDetectorOptions(options))
+      .detectSingleFace(
+        ref.current,
+        new faceapi.TinyFaceDetectorOptions(options)
+      )
       .withFaceLandmarks()
       .withFaceDescriptor()
       .withAgeAndGender();
@@ -95,37 +98,49 @@ const Pictures = () => {
     console.log("Loading face models...");
     setIsLoading(true);
     await loadFaceModels();
-  
+
     console.log("Detecting faces for the first image...");
     const firstPic = await detectFace(firstRef);
     console.log("First picture face detection result:", firstPic);
-  
+
     console.log("Detecting faces for the second image...");
-    const secondPic = await detectFace(secondRef, { inputSize: 416, scoreThreshold: 0.2 });
+    const secondPic = await detectFace(secondRef, {
+      inputSize: 416,
+      scoreThreshold: 0.2,
+    });
     console.log("Second picture face detection result:", secondPic);
-  
+
     if (firstPic && secondPic) {
-      const dis = faceapi.euclideanDistance(firstPic.descriptor, secondPic.descriptor);
+      const dis = faceapi.euclideanDistance(
+        firstPic.descriptor,
+        secondPic.descriptor
+      );
       console.log("Computed distance between first and second images:", dis);
       setDistance1(dis);
     } else {
       console.warn("Face detection failed for one or both images.");
       handleFaceDetectionFailure(firstPic, secondPic, 1, 2);
     }
-  
+
     console.log("Reloading face models...");
     await loadFaceModels();
-  
+
     console.log("Detecting faces for the third image...");
     const thridPic = await detectFace(thridRef);
     console.log("Third picture face detection result:", thridPic);
-  
+
     console.log("Detecting faces for the fourth image...");
-    const forthPic = await detectFace(forthRef, { inputSize: 416, scoreThreshold: 0.2 });
+    const forthPic = await detectFace(forthRef, {
+      inputSize: 416,
+      scoreThreshold: 0.2,
+    });
     console.log("Fourth picture face detection result:", forthPic);
-  
+
     if (thridPic && forthPic) {
-      const dis = faceapi.euclideanDistance(thridPic.descriptor, forthPic.descriptor);
+      const dis = faceapi.euclideanDistance(
+        thridPic.descriptor,
+        forthPic.descriptor
+      );
       console.log("Computed distance between third and fourth images:", dis);
       setDistance2(dis);
     } else {
@@ -135,7 +150,12 @@ const Pictures = () => {
     setIsLoading(false);
   }
 
-  function handleFaceDetectionFailure(firstPic, secondPic, firstIndex, secondIndex) {
+  function handleFaceDetectionFailure(
+    firstPic,
+    secondPic,
+    firstIndex,
+    secondIndex
+  ) {
     toast("عکسی رو آپلود کن که چهرت مشخص باشه و با کیفیت باشه", {
       autoClose: 4000,
       position: "top-center",
@@ -152,19 +172,21 @@ const Pictures = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Submit button clicked. Starting process...");
-  
+
     toast("صبر کن هوش مصنوعی عکساتو چک کنه. شاید ۴۰ ثانیه طول بکشه", {
       autoClose: 6000,
       position: "top-center",
       theme: "dark",
     });
-  
-    const files = [file1?.name, file2?.name, file3?.name, file4?.name].filter(Boolean);
+
+    const files = [file1?.name, file2?.name, file3?.name, file4?.name].filter(
+      Boolean
+    );
     const allUnique = new Set(files).size === images.length;
-  
+
     console.log("Uploaded files:", files);
     console.log("Are all uploaded images unique?", allUnique);
-  
+
     if (!allUnique) {
       toast("عکس تکراری آپلود نکن", {
         autoClose: 2000,
@@ -173,12 +195,12 @@ const Pictures = () => {
       });
       return;
     }
-  
+
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-  
+
     console.log("Calling getDistance to verify face descriptors...");
     getDistance();
   };
@@ -254,13 +276,13 @@ const Pictures = () => {
     setIsLoading(true);
     const files = [file1, file2, file3, file4];
     const imagesData = new FormData();
-  
+
     files.forEach((file, i) => {
       const key = i === 0 ? "a" : i === 1 ? "b" : i === 2 ? "c" : "d";
       console.log(`Appending file ${key}:`, file);
       imagesData.append(key, file);
     });
-  
+
     try {
       console.log("Sending image data to server...");
       const sendimages = await axios.post(
@@ -272,7 +294,10 @@ const Pictures = () => {
           },
         }
       );
-      console.log("Image upload successful. Received folder name:", sendimages.data.folder_name);
+      console.log(
+        "Image upload successful. Received folder name:",
+        sendimages.data.folder_name
+      );
       setFolder(sendimages.data.folder_name);
     } catch (error) {
       console.error("Error during image upload:", error);
@@ -284,7 +309,7 @@ const Pictures = () => {
       sendData();
     }
   }, [folder]);
-  
+
   async function sendData() {
     const currentParams = window.location.hash.substring(1);
     const data = {
@@ -298,18 +323,21 @@ const Pictures = () => {
       favorites,
       photos: folder,
     };
-  
+
     console.log("Sending user data to server:", data);
-  
+
     try {
-      const response = await fetch("https://api.blinddatepersian.site/index.php/Login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-  
+      const response = await fetch(
+        "https://api.blinddatepersian.site/index.php/Login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
       if (response.status === 200) {
         console.log("Server response:", await response.json());
         router.push(`/#${currentParams}`);
@@ -320,7 +348,6 @@ const Pictures = () => {
       console.error("Error sending data to server:", error);
     }
   }
-  
 
   useEffect(() => {
     setDistance((distance1 + distance2) / 2);
@@ -380,7 +407,10 @@ const Pictures = () => {
                     </span>
                   </div>
                   <div className="UploadImages_photosContainer__AAIqS">
-                    <label className="UploadImages_label__AVCyC" htmlFor="file-0">
+                    <label
+                      className="UploadImages_label__AVCyC"
+                      htmlFor="file-0"
+                    >
                       {!img1 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -403,10 +433,17 @@ const Pictures = () => {
                         onChange={(e) => handleImageChange(e, 1)}
                       />
                       {img1 && (
-                        <img src={img1} ref={firstRef} className="w-full uploaded-img" />
+                        <img
+                          src={img1}
+                          ref={firstRef}
+                          className="w-full uploaded-img"
+                        />
                       )}
                     </label>
-                    <label className="UploadImages_label__AVCyC" htmlFor="file-1">
+                    <label
+                      className="UploadImages_label__AVCyC"
+                      htmlFor="file-1"
+                    >
                       {!img2 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -428,10 +465,17 @@ const Pictures = () => {
                         onChange={(e) => handleImageChange(e, 2)}
                       />
                       {img2 && (
-                        <img src={img2} ref={secondRef} className="w-full uploaded-img" />
+                        <img
+                          src={img2}
+                          ref={secondRef}
+                          className="w-full uploaded-img"
+                        />
                       )}
                     </label>
-                    <label className="UploadImages_label__AVCyC" htmlFor="file-2">
+                    <label
+                      className="UploadImages_label__AVCyC"
+                      htmlFor="file-2"
+                    >
                       {!img3 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -453,10 +497,17 @@ const Pictures = () => {
                         onChange={(e) => handleImageChange(e, 3)}
                       />
                       {img3 && (
-                        <img src={img3} ref={thridRef} className="w-full uploaded-img" />
+                        <img
+                          src={img3}
+                          ref={thridRef}
+                          className="w-full uploaded-img"
+                        />
                       )}
                     </label>
-                    <label className="UploadImages_label__AVCyC" htmlFor="file-3">
+                    <label
+                      className="UploadImages_label__AVCyC"
+                      htmlFor="file-3"
+                    >
                       {!img4 && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -478,7 +529,11 @@ const Pictures = () => {
                         onChange={(e) => handleImageChange(e, 4)}
                       />
                       {img4 && (
-                        <img src={img4} ref={forthRef} className="w-full uploaded-img" />
+                        <img
+                          src={img4}
+                          ref={forthRef}
+                          className="w-full uploaded-img"
+                        />
                       )}
                     </label>
                   </div>
