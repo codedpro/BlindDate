@@ -2,7 +2,7 @@
 import { useStore } from "@/store/use-hooks";
 import { toast, ToastContainer } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/forms/Checkbox";
 import { FaHeart } from "react-icons/fa";
 
@@ -20,9 +20,8 @@ const predefinedFavorites = [
 ];
 
 const Favorites = () => {
-  const { favorites, setFavorites, appData, bio } = useStore();
+  const { setFavorites, appData, bio } = useStore();
   const [selectedFavorites, setSelectedFavorites] = useState<string[]>([]);
-  const searchParams = useSearchParams(); 
 
   const router = useRouter();
 
@@ -39,7 +38,14 @@ const Favorites = () => {
       });
     }
   };
-  const currentParams = window.location.hash.substring(1);
+  const [currentParams, setCurrentParams] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.substring(1);
+      setCurrentParams(hash);
+    }
+  }, []);
 
   const handleConfirmFavorites = () => {
     if (selectedFavorites.length >= 1) {
@@ -65,7 +71,10 @@ const Favorites = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#000000] text-white">
-      <div dir="rtl" className="flex-grow w-full max-w-lg mx-auto h-32 overflow-y-auto p-4">
+      <div
+        dir="rtl"
+        className="flex-grow w-full max-w-lg mx-auto h-32 overflow-y-auto p-4"
+      >
         <div className="w-full bg-[#1c1c1d] p-6 rounded-lg">
           <div className="flex items-center justify-center mb-5">
             <FaHeart className="text-red-500 text-2xl ml-2" />

@@ -19,37 +19,35 @@ function Home() {
     setImg2,
     setImg3,
     setImg4,
-    key,
-    roomkey,
-    setRoomKey,
     setKey,
   } = useStore();
-    const searchParams = useSearchParams(); 
-  
 
   const [folder, setFolder] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const [channels, setChannels] = useState<string[] | null>(null);
-  const [currentTime, setCurrentTime] = useState("");
 
   const router = useRouter();
-  const currentParams = window.location.hash.substring(1);
-  const hash = window.location.hash.substring(1);
+  const [currentParams, setCurrentParams] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.substring(1);
+      setCurrentParams(hash);
+    }
+  }, []);
 
   async function checkChannels() {
     setChecking(true);
 
-    if (!hash) {
+    if (!currentParams) {
       console.error("No hash found in the URL.");
       setChecking(false);
       return;
     }
 
-
-
     try {
       const data = {
-        app_data: hash,
+        app_data: currentParams,
       };
       const getChannels = await axios.post(
         "https://api.blinddatepersian.site/index.php/CheckJoin",
@@ -73,7 +71,7 @@ function Home() {
     try {
       const data = {
         chat_id: chatId,
-        app_data: hash,
+        app_data: currentParams,
       };
 
       const sendData = await axios.post(
@@ -82,8 +80,8 @@ function Home() {
       );
       console.log(sendData);
       if (sendData.data.status === "User Not Found !") {
-        console.log(data)
-     //   router.push(`/onBoard/#${hash}`);
+        console.log(data);
+        // router.push(`/onBoard/#${currentParams}`);
       }
       const profile = sendData.data.data[0];
 
@@ -112,29 +110,29 @@ function Home() {
   useEffect(() => {
     if (folder !== null) {
       setImg1(`https://api.blinddatepersian.site/images/${folder}/1.png`);
-      setImg2(`https://api.blinddatepersian.site/images//${folder}/2.png`);
-      setImg3(`https://api.blinddatepersian.site/images//${folder}/3.png`);
-      setImg4(`https://api.blinddatepersian.site/images//${folder}/4.png`);
+      setImg2(`https://api.blinddatepersian.site/images/${folder}/2.png`);
+      setImg3(`https://api.blinddatepersian.site/images/${folder}/3.png`);
+      setImg4(`https://api.blinddatepersian.site/images/${folder}/4.png`);
       router.push(`/Home/#${currentParams}`);
     }
-  }, [folder]);
+  }, [folder, currentParams]);
 
   useEffect(() => {
     checkChannels();
-  }, []);
+  }, [currentParams]);
 
   return (
     <>
       {channels ? (
         <div className="h-screen flex justify-center items-center">
           <div className="bg-gray-800 flex flex-col gap-4 p-8 z-10 rounded-lg text-right">
-            <h2 className="mb-6">
-              :برای ادامه باید در کانال های زیر عضو شوید
-            </h2>
+            <h2 className="mb-6">:برای ادامه باید در کانال های زیر عضو شوید</h2>
             {channels?.map((c, i) => (
               <a
                 href={c}
-                className={`p-2 border border-white rounded-lg transition-opacity ${checking ? "opacity-60" : ""}`}
+                className={`p-2 border border-white rounded-lg transition-opacity ${
+                  checking ? "opacity-60" : ""
+                }`}
                 key={i}
               >
                 {`کانال شماره ${i + 1}`}

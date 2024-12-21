@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/store/use-hooks";
 import { FaBriefcase, FaCheck } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const allJobs = [
   "مهندسی",
@@ -26,7 +26,6 @@ const allJobs = [
 const Job = () => {
   const { jobs, setJobs, appData } = useStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const searchParams = useSearchParams(); 
 
   const router = useRouter();
   const filteredJobs = searchTerm
@@ -55,6 +54,15 @@ const Job = () => {
     });
   };
 
+  const [currentParams, setCurrentParams] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.substring(1);
+      setCurrentParams(hash);
+    }
+  }, []);
+
   const handleConfirm = () => {
     if (jobs.length >= 1) {
       toast("✅ انتخاب‌ها ثبت شد", {
@@ -62,7 +70,6 @@ const Job = () => {
         position: "top-center",
         theme: "dark",
       });
-      const currentParams = window.location.hash.substring(1);
 
       router.push(`/onBoard/pictures#${currentParams}`);
     } else {
@@ -80,7 +87,10 @@ const Job = () => {
       className="flex flex-col justify-between min-h-screen bg-[#000000] text-white"
     >
       {/* Scrollable Content */}
-      <div dir="rtl" className="flex-grow w-full max-w-md mx-auto overflow-y-auto h-32 p-4">
+      <div
+        dir="rtl"
+        className="flex-grow w-full max-w-md mx-auto overflow-y-auto h-32 p-4"
+      >
         {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <FaBriefcase className="text-4xl mb-2" />
