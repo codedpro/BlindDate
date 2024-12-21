@@ -53,7 +53,10 @@ function Home() {
         "https://api.blinddatepersian.site/index.php/CheckJoin",
         JSON.stringify(data)
       );
-      if (getChannels.data.status === false || getChannels.data.how === "left") {
+      if (
+        getChannels.data.status === false ||
+        getChannels.data.how === "left"
+      ) {
         setChannels(getChannels.data.channels);
 
         setTimeout(() => {
@@ -81,7 +84,7 @@ function Home() {
       console.log(sendData);
       if (sendData.data.status === "User Not Found !") {
         console.log(data);
-        // router.push(`/onBoard/#${currentParams}`);
+        router.push(`/onBoard/#${currentParams}`);
       }
       const profile = sendData.data.data[0];
 
