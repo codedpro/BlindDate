@@ -55,7 +55,9 @@ const Wheel: React.FC<WheelProps> = (props) => {
       size.current = s.size;
     },
     detailsChanged: (s: KeenSliderInstance) => {
-      setSliderState(s.track.details);
+      const currentIdx = s.track.details.rel;
+      const actualValue = minValue + currentIdx; // Map index to value
+      setSliderState({ ...s.track.details, value: actualValue });
     },
     rubberband: !props.loop,
     mode: "free-snap",
@@ -87,7 +89,7 @@ const Wheel: React.FC<WheelProps> = (props) => {
       };
 
       // Corrected value calculation for unique mapping
-      const value = minValue + ((i + (props.initIdx || 0)) % range);
+      const value = minValue + i;
       values.push({ style, value });
     }
     return values;
